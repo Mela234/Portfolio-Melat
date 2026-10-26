@@ -5,6 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Melat Amde Gebremeskel, software engineer. Projects and playable demos.">
 <title>Melat Gebremeskel</title>
+<meta name="theme-color" content="#E8F0FB" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0B1528" media="(prefers-color-scheme: dark)">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Melat Gebremeskel · Software engineer">
+<meta property="og:description" content="Android apps, web platforms and small experiments, each with a playable demo. Clear all six quests.">
+<meta property="og:url" content="https://mela234.github.io/Portfolio-Melat/">
+<meta name="twitter:card" content="summary">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap">
@@ -67,6 +74,7 @@ h1,h2,h3{font-family:var(--f-display);margin:0;line-height:1;text-wrap:balance}
 .bulb.on .halo{opacity:calc(.12 + var(--glow)*.3)}
 .bulb:hover .glass{transform-box:fill-box;transform-origin:50% 0;animation:jiggle .5s}
 @keyframes jiggle{30%{rotate:12deg}70%{rotate:-8deg}}
+.bulb .hit{fill:transparent}
 .lights-hint{position:absolute;right:16px;top:44px;font-family:var(--f-mono);font-size:.68rem;color:var(--dim)}
 
 /* ---------- hero ---------- */
@@ -131,9 +139,14 @@ h1,h2,h3{font-family:var(--f-display);margin:0;line-height:1;text-wrap:balance}
 .also-row a:hover{border-color:var(--blue);color:var(--blue)}
 .also-row span{color:var(--dim)}
 
-footer{margin-top:90px;border-top:2px solid var(--line);padding-block:30px 60px;display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;align-items:end}
+footer{margin-top:90px;border-top:2px solid var(--line);padding-block:30px 96px;display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;align-items:end}
 footer h2{font-size:clamp(2rem,5vw,3rem);font-weight:800;letter-spacing:-.02em}
 footer h2 span{color:var(--blue)}
+footer .ctas{margin-top:0}
+.skip{position:absolute;left:16px;top:-60px;z-index:50;background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:999px;font-weight:700;text-decoration:none}
+.skip:focus{top:12px}
+.impact{display:flex;gap:8px;align-items:baseline;margin:0;font-size:.9rem;font-weight:700;color:var(--ink)}
+.impact::before{content:"↗";color:var(--a);font-family:var(--f-mono)}
 
 /* ---------- demo dialog ---------- */
 dialog{border:none;padding:0;background:transparent;color:var(--ink);width:100%;max-width:min(640px,calc(100vw - 24px));max-height:calc(100dvh - 24px)}
@@ -203,10 +216,46 @@ dialog::backdrop{background:rgba(11,21,40,.55);backdrop-filter:blur(3px)}
 .fb-item b{font-size:.92rem}
 .fb-item .cat{font-family:var(--f-mono);font-size:.68rem;color:var(--a);margin-left:6px}
 
+/* ---------- quests ---------- */
+.stamp{position:absolute;top:24px;right:14px;z-index:1;font-family:var(--f-display);font-weight:800;font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;color:var(--a);
+  border:2px solid var(--a);border-radius:6px;padding:2px 7px;background:var(--card);rotate:8deg;opacity:0;scale:1.8;transition:opacity .3s,scale .4s cubic-bezier(.3,1.6,.5,1);pointer-events:none}
+.tag.cleared .stamp{opacity:1;scale:1}
+.quest{display:flex;align-items:center;gap:8px;font-family:var(--f-mono);font-size:.74rem;color:var(--dim);padding:7px 10px;border:1.5px dashed var(--line);border-radius:8px;transition:background-color .3s,border-color .3s}
+.quest.done{color:var(--ink);border-style:solid;border-color:var(--a);background:color-mix(in srgb,var(--a) 10%,transparent)}
+.chk{width:16px;height:16px;border-radius:50%;border:1.5px solid currentColor;display:grid;place-items:center;flex:none;font-size:.6rem;font-style:normal;line-height:1}
+.done>.chk{background:var(--a);border-color:var(--a);color:#fff}
+.done>.chk::after{content:"✓"}
+.room .quest.done{animation:pop .5s cubic-bezier(.3,1.6,.5,1)}
+@keyframes pop{40%{scale:1.04}}
+.hud{position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:max(16px,env(safe-area-inset-bottom,0px));z-index:20;display:grid;justify-items:end;gap:8px}
+.hud-btn{display:flex;align-items:center;gap:10px;border:2px solid var(--ink);background:var(--card);border-radius:999px;padding:8px 14px 8px 12px;box-shadow:var(--shadow);font-family:var(--f-mono);font-size:.8rem;font-weight:600}
+.dots{display:flex;gap:4px;align-items:center}
+.dots i{width:9px;height:9px;border-radius:50%;background:var(--bulb-off);transition:background-color .3s}
+.dots i.on{background:var(--c);box-shadow:0 0 calc(3px + var(--glow)*6px) var(--c)}
+.dots i.star{border-radius:2px;rotate:45deg;width:8px;height:8px;margin-left:3px}
+.hud-panel{width:min(310px,calc(100vw - 32px));background:var(--card);border:2px solid var(--ink);border-radius:14px;padding:16px;box-shadow:var(--shadow);display:grid;gap:12px}
+.hud-panel ol{list-style:none;margin:0;padding:0;display:grid;gap:4px}
+.hud-panel li{display:flex;gap:10px;align-items:start;padding:6px;border-radius:8px}
+.hud-panel li .chk{margin-top:3px}
+.hud-panel li:not(.done) .chk{color:var(--dim)}
+.hud-panel li button,.hud-panel li>span{display:grid;text-align:left;background:none;border:0;padding:0;font-size:.85rem;line-height:1.35}
+.hud-panel li button:hover b{color:var(--a)}
+.hud-panel li span span{color:var(--dim);font-size:.8rem}
+.hud-foot{display:flex;justify-content:space-between;align-items:center;font-family:var(--f-mono);font-size:.7rem;color:var(--dim)}
+.hud-foot button{background:none;border:0;padding:0;text-decoration:underline;color:var(--dim)}
+.toasts{position:fixed;left:50%;top:max(20px,env(safe-area-inset-top,0px));translate:-50% 0;z-index:30;display:grid;gap:8px;justify-items:center;width:max-content;max-width:calc(100vw - 32px);pointer-events:none}
+.toast{background:var(--ink);color:var(--bg);border-radius:999px;padding:10px 18px;font-weight:700;font-size:.9rem;box-shadow:var(--shadow);animation:toast 3.4s both}
+.toast b{color:var(--amber)}
+@keyframes toast{0%{opacity:0;transform:translateY(-16px)}8%,85%{opacity:1;transform:none}100%{opacity:0;transform:translateY(-8px)}}
+.finale{font-family:var(--f-mono);font-size:.8rem;margin:0 0 12px}
+.finale b{color:var(--amber)}
+.confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:40}
+
 @media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
+<a class="skip" href="#projects">Skip to projects</a>
 <div class="lights" aria-label="String lights: click a bulb to switch it"><svg id="lights" viewBox="0 0 1000 44" preserveAspectRatio="none"></svg><span class="lights-hint">click the bulbs</span></div>
 
 <main class="wrap">
@@ -234,7 +283,7 @@ dialog::backdrop{background:rgba(11,21,40,.55);backdrop-filter:blur(3px)}
   <section id="projects" aria-labelledby="proj-h">
     <div class="sec-head">
       <div><div class="eyebrow">On the line</div><h2 id="proj-h">Projects</h2></div>
-      <p>Hit “Play” for a quick demo. The code lives on GitHub.</p>
+      <p>Hit “Play” for a quick demo. Each one hides a quest.</p>
     </div>
     <div class="line"><div class="tags" id="tags"></div></div>
 
@@ -245,29 +294,43 @@ dialog::backdrop{background:rgba(11,21,40,.55);backdrop-filter:blur(3px)}
   </section>
 
   <footer>
-    <h2>Let’s build <span>something</span>.</h2>
-    <a class="btn" href="https://github.com/Mela234" target="_blank" rel="noopener">github.com/Mela234 ↗</a>
+    <div><p class="finale" id="finale" hidden><b>★</b> All quests cleared. Thanks for playing.</p><h2>Let’s build <span>something</span>.</h2></div>
+    <div class="ctas" id="contact"><a class="btn" href="https://github.com/Mela234" target="_blank" rel="noopener">github.com/Mela234 ↗</a></div>
   </footer>
 </main>
 
 <dialog id="dlg" aria-labelledby="room-title"><div id="room"></div></dialog>
 
+<div class="hud" id="hud">
+  <div class="hud-panel" id="hud-panel" hidden>
+    <div><div class="eyebrow">Side quests</div><h3 style="font-size:1.5rem;margin-top:4px">Light up the line</h3></div>
+    <ol id="qlist"></ol>
+    <div class="hud-foot"><span>Progress saves in this browser</span><button id="q-reset">Reset</button></div>
+  </div>
+  <button class="hud-btn" id="hud-btn" aria-expanded="false" aria-controls="hud-panel"><span class="dots" id="dots" aria-hidden="true"></span><span id="hud-n">0/6 quests</span></button>
+</div>
+<div class="toasts" id="toasts" role="status" aria-live="polite"></div>
+
 <script>
 (() => {
 const GH="https://github.com/Mela234/";
+/* Contact links: fill these in; empty ones stay hidden. */
+const ME={email:"",linkedin:"",resume:""};
+/* Optional one-line results per project, e.g. {farm:"Built in 3 weeks for Kaggle"}; empty ones stay hidden. */
+const IMPACT={};
 const P=[
   {id:"farm",a:"--teal",kind:"Android · on-device AI",name:"Farm Assistant",line:"Offline crop diagnosis for farmers, running Gemma 4 right on the phone.",stack:["Kotlin","Compose","LiteRT-LM","BLE"],repo:"Assist-Me-Farm",toy:"farm",
-   desc:"Snap a crop, read soil data from a Bluetooth sensor, and get a diagnosis with no internet. Built for the Kaggle Gemma 4 Good hackathon."},
+   quest:"Nurse the soil back to Healthy",desc:"Snap a crop, read soil data from a Bluetooth sensor, and get a diagnosis with no internet. Built for the Kaggle Gemma 4 Good hackathon."},
   {id:"bazaar",a:"--coral",kind:"Mobile + web platform",name:"Bazaar",line:"Pickup marketplace for specialty grocers: shopper app plus merchant dashboard.",stack:["React Native","Expo","React","Tailwind"],repo:"bazaar-app",toy:"bazaar",
-   desc:"A React Native shopper app and a React merchant portal with orders, inventory and revenue."},
+   quest:"Hand over every order",desc:"A React Native shopper app and a React merchant portal with orders, inventory and revenue."},
   {id:"voices",a:"--blue",kind:"3D visualisation",name:"VOICES",line:"Protest movements from 1848 to today on an interactive 3D globe.",stack:["Three.js","WebGL","GeoJSON"],repo:"Protest-Globe",toy:"globe",
-   desc:"Spin the globe, scrub through eras and open a city to see its protest posters."},
+   quest:"Spin the globe and rewind to 1848",desc:"Spin the globe, scrub through eras and open a city to see its protest posters."},
   {id:"ttt",a:"--amber",kind:"Real-time multiplayer",name:"Tic-Tac-Toe Online",line:"Multiplayer tic-tac-toe with game rooms and live chat.",stack:["Python","Flask","Socket.IO"],repo:"tictactoe-game",toy:"ttt",
-   desc:"A Flask-SocketIO server keeps the game state and relays moves and chat between players in real time."},
+   quest:"Beat or tie the bot",desc:"A Flask-SocketIO server keeps the game state and relays moves and chat between players in real time."},
   {id:"feedback",a:"--indigo",kind:"Full stack",name:"Product Feedback",line:"Feedback board with upvotes, threaded comments and a roadmap.",stack:["React","Express","Node"],repo:"Product_feedback_App",toy:"feedback",
-   desc:"Post ideas, upvote, sort and reply. React front end, Express API."},
+   quest:"Upvote every idea on the board",desc:"Post ideas, upvote, sort and reply. React front end, Express API."},
   {id:"tapin",a:"--sky",kind:"Web · wellbeing",name:"Tap-In",line:"A site that interrupts doomscrolling so parents can tap in with their kids.",stack:["Web"],repo:"TapInFinal",toy:"tapin",
-   desc:"Endless feeds never give you a stopping point. Tap-In adds one."}
+   quest:"Scroll until Tap-In stops you",desc:"Endless feeds never give you a stopping point. Tap-In adds one."}
 ];
 const ALSO=[["Bazaar Merchant Portal","bazaar-merchant-portal"],["Bazaar for Business","Bazzar"],["Dera Market","Ethnic-market-"],["Portfolio 2023","Portfolio"],["Sholla Market · private",null],["SwapTop · private",null]];
 const $=(s,r=document)=>r.querySelector(s);
@@ -275,20 +338,23 @@ const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim
 const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 /* ---------- lights ---------- */
-(()=>{
-  const svg=$("#lights"),cols=["--bulb","--sky","--bulb","--coral","--bulb","--teal"];const off=new Set();
+const LIGHTS=(()=>{
+  const svg=$("#lights"),cols=["--bulb","--sky","--bulb","--coral","--bulb","--teal"];const st=new Map();
   const build=()=>{const W=Math.max(320,svg.clientWidth||svg.parentNode.clientWidth),n=Math.max(6,Math.round(W/62)),w=W/n;
     svg.setAttribute("viewBox",`0 0 ${W} 44`);let d="M0 6 ",b="";
-    for(let i=0;i<n;i++){d+=`Q${i*w+w/2} 30 ${(i+1)*w} 6 `;const x=i*w+w/2,y=18,on=!off.has(i)&&i%4!==3;
+    for(let i=0;i<n;i++){d+=`Q${i*w+w/2} 30 ${(i+1)*w} 6 `;const x=i*w+w/2,y=18,on=st.has(i)?st.get(i):i%4!==3;
       b+=`<g class="bulb${on?" on":""}" data-i="${i}" style="--c:var(${cols[i%cols.length]})" tabindex="0" role="switch" aria-checked="${on}" aria-label="Bulb ${i+1}">
-        <ellipse class="halo" cx="${x}" cy="${y+12}" rx="16" ry="16"/><rect class="cap" x="${x-3}" y="${y}" width="6" height="5" rx="1"/>
+        <rect class="hit" x="${x-14}" y="${y-4}" width="28" height="32"/><ellipse class="halo" cx="${x}" cy="${y+12}" rx="16" ry="16"/><rect class="cap" x="${x-3}" y="${y}" width="6" height="5" rx="1"/>
         <path class="glass" d="M${x-5} ${y+5} Q${x-7} ${y+16} ${x} ${y+21} Q${x+7} ${y+16} ${x+5} ${y+5} Z"/></g>`}
     svg.innerHTML=`<path class="wire" d="${d}"/>`+b};
   svg.removeAttribute("preserveAspectRatio");build();new ResizeObserver(build).observe(svg.parentNode);
-  const flip=g=>{g.classList.toggle("on");const on=g.classList.contains("on");g.setAttribute("aria-checked",on);const i=+g.dataset.i;on?off.delete(i):off.add(i)};
+  const set=(g,on)=>{g.classList.toggle("on",on);g.setAttribute("aria-checked",on);st.set(+g.dataset.i,on)};
+  const flip=g=>{set(g,!g.classList.contains("on"));if(!svg.querySelector(".bulb:not(.on)"))done("bulbs")};
   svg.addEventListener("click",e=>{const g=e.target.closest(".bulb");if(g)flip(g)});
   svg.addEventListener("keydown",e=>{const g=e.target.closest(".bulb");if(g&&(e.key==="Enter"||e.key===" ")){e.preventDefault();flip(g)}});
-  if(!reduce)setInterval(()=>{[...svg.querySelectorAll(".bulb")].forEach((g,i)=>setTimeout(()=>{g.style.opacity=".5";setTimeout(()=>g.style.opacity="",160)},i*60))},7000);
+  const wave=()=>[...svg.querySelectorAll(".bulb")].forEach((g,i)=>setTimeout(()=>{g.style.opacity=".5";setTimeout(()=>g.style.opacity="",160)},i*60));
+  if(!reduce)setInterval(wave,7000);
+  return{party(){svg.querySelectorAll(".bulb").forEach(g=>set(g,true));if(!reduce)[0,800,1600].forEach(t=>setTimeout(wave,t))}};
 })();
 
 /* ---------- day / night sign ---------- */
@@ -302,11 +368,12 @@ matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change",sync);
 
 /* ---------- tags ---------- */
 $("#tags").innerHTML=P.map(p=>`
-  <article class="tag" style="--a:var(${p.a})">
-    <span class="pin" aria-hidden="true"></span>
+  <article class="tag" data-id="${p.id}" style="--a:var(${p.a})">
+    <span class="pin" aria-hidden="true"></span><span class="stamp" aria-hidden="true">Cleared</span>
     <div class="tag-card"><div class="tag-top" aria-hidden="true"></div>
       <div class="tag-body">
-        <div class="kind">${p.kind}</div><h3>${p.name}</h3><p>${p.line}</p>
+        <div class="kind">${p.kind}</div><h3>${p.name}</h3><p>${p.line}</p>${IMPACT[p.id]?`<p class="impact">${IMPACT[p.id]}</p>`:""}
+        <div class="quest" data-q="${p.id}"><i class="chk" aria-hidden="true"></i>Quest: ${p.quest}</div>
         <div class="stack">${p.stack.map(s=>`<span>${s}</span>`).join("")}</div>
         <div class="tag-actions">
           <button class="btn play" data-open="${p.id}">▶ Play</button>
@@ -314,6 +381,8 @@ $("#tags").innerHTML=P.map(p=>`
         </div>
       </div></div>
   </article>`).join("");
+const links=[ME.email&&`<a class="btn ghost" href="mailto:${ME.email}">Email ✉</a>`,ME.linkedin&&`<a class="btn ghost" href="${ME.linkedin}" target="_blank" rel="noopener">LinkedIn ↗</a>`,ME.resume&&`<a class="btn ghost" href="${ME.resume}" target="_blank" rel="noopener">Résumé ↗</a>`].filter(Boolean).join("");
+$("#contact").insertAdjacentHTML("beforeend",links);$(".hero .ctas").insertAdjacentHTML("beforeend",links);
 $("#also").innerHTML=ALSO.map(([n,r])=>r?`<a href="${GH+r}" target="_blank" rel="noopener">${n} ↗</a>`:`<span>${n}</span>`).join("");
 
 /* ---------- demo dialog ---------- */
@@ -323,12 +392,12 @@ function open(id){
   const p=P.find(x=>x.id===id); if(cleanup){cleanup();cleanup=null}
   $("#room").innerHTML=`<div class="room" style="--a:var(${p.a})"><div class="tag-top" aria-hidden="true"></div><div class="room-body">
     <div class="room-head"><div><div class="eyebrow">${p.kind}</div><h3 id="room-title">${p.name}</h3></div><button class="x" id="x" aria-label="Close">✕</button></div>
-    <p class="desc">${p.desc}</p><div class="toy" id="toy"></div>
+    <p class="desc">${p.desc}</p>${IMPACT[p.id]?`<p class="impact">${IMPACT[p.id]}</p>`:""}<div class="quest" data-q="${p.id}"><i class="chk" aria-hidden="true"></i>Quest: ${p.quest}</div><div class="toy" id="toy"></div>
     <div><a class="btn" href="${GH+p.repo}" target="_blank" rel="noopener">View the code on GitHub ↗</a></div></div></div>`;
   $("#x").onclick=()=>dlg.close();
-  cleanup=TOYS[p.toy]($("#toy"))||null; dlg.showModal();
+  cleanup=TOYS[p.toy]($("#toy"))||null; renderQ(); panel(false); dlg.showModal(); dlg.append(toasts);
 }
-dlg.addEventListener("close",()=>{if(cleanup){cleanup();cleanup=null}});
+dlg.addEventListener("close",()=>{if(cleanup){cleanup();cleanup=null}document.body.append(toasts);if(pending){pending=false;finale()}});
 dlg.addEventListener("click",e=>{if(e.target===dlg)dlg.close()});
 
 const TOYS={
@@ -349,7 +418,7 @@ const TOYS={
       let s=100-Math.max(0,Math.abs(p-6.5)-.5)*22-(m<40?(40-m)*1.1:m>70?(m-70)*1.3:0)-(n<50?(50-n)*.7:0);s=Math.round(Math.max(0,Math.min(100,s)));
       const col=s>=75?"--teal":s>=45?"--amber":"--coral";const arc=$("#arc",el);arc.style.stroke=`var(${col})`;arc.setAttribute("stroke-dashoffset",213.6*(1-s/100));$("#sc",el).textContent=s;
       const t=[];if(p<6)t.push("add lime to raise pH");if(p>7)t.push("add organic matter to lower pH");if(m<40)t.push("irrigate soon");if(m>70)t.push("check drainage");if(n<50)t.push("add nitrogen");
-      $("#verdict",el).innerHTML=`<b>${s>=75?"Healthy":s>=45?"Needs attention":"At risk"}</b>${t.length?"Suggested: "+t.join(", ")+".":"Conditions look good."}`};
+      $("#verdict",el).innerHTML=`<b>${s>=75?"Healthy":s>=45?"Needs attention":"At risk"}</b>${t.length?"Suggested: "+t.join(", ")+".":"Conditions look good."}`;if(s>=75)done("farm")};
     [ph,mo,ni].forEach(i=>i.addEventListener("input",upd));upd();
   },
   bazaar(el){
@@ -357,7 +426,7 @@ const TOYS={
     const o=[{n:"#1042",w:"Teff injera ×4 · shiro 500g",s:0},{n:"#1043",w:"Basmati 5kg · ghee · cardamom",s:1},{n:"#1044",w:"Berbere 250g · lentils 2kg",s:0}];
     el.innerHTML=`<div class="toy-label"><span>Try it · merchant order queue</span><span>Like the merchant portal</span></div><div class="orders" id="ol"></div>`;
     const draw=()=>{$("#ol",el).innerHTML=o.map((x,i)=>`<div class="order"><div class="what"><b>${x.n}</b>${x.w}</div><span class="pill s${x.s}">${ST[x.s]}</span><button data-i="${i}" ${x.s===3?"disabled":""}>${x.s===3?"Done":"Advance →"}</button></div>`).join("")};
-    el.addEventListener("click",e=>{const b=e.target.closest("[data-i]");if(!b)return;o[b.dataset.i].s=Math.min(3,o[b.dataset.i].s+1);draw()});draw();
+    el.addEventListener("click",e=>{const b=e.target.closest("[data-i]");if(!b)return;o[b.dataset.i].s=Math.min(3,o[b.dataset.i].s+1);draw();if(o.every(x=>x.s===3))done("bazaar")});draw();
   },
   globe(el){
     const PINS=[["Paris",48.86,2.35,1848],["Selma",32.41,-87.02,1965],["Soweto",-26.27,27.86,1976],["Berlin",52.52,13.4,1989],["Cairo",30.04,31.24,2011],["Minneapolis",44.98,-93.27,2020]];
@@ -377,10 +446,11 @@ const TOYS={
         ctx.beginPath();ctx.arc(x,y-36,9,0,6.28);ctx.fillStyle=p[3]>=2000?coral:blue;ctx.fill();
         ctx.font="600 20px JetBrains Mono, monospace";ctx.fillStyle=ink;ctx.fillText(`${p[0]} ${p[3]}`,x+14,y-30)}};
     const loop=()=>{if(auto&&!reduce)l0-=.25;draw();raf=requestAnimationFrame(loop)};
+    let spun=false;const chk=()=>{if(spun&&year===1848)done("voices")};
     cv.addEventListener("pointerdown",e=>{drag=[e.clientX,e.clientY,l0,p0];auto=false;cv.setPointerCapture(e.pointerId)});
-    cv.addEventListener("pointermove",e=>{if(!drag)return;const k=180/cv.clientWidth;l0=drag[2]-(e.clientX-drag[0])*k;p0=Math.max(-80,Math.min(80,drag[3]+(e.clientY-drag[1])*k))});
-    const end=()=>{drag=null;setTimeout(()=>{if(!drag)auto=true},2500)};cv.addEventListener("pointerup",end);cv.addEventListener("pointercancel",end);
-    $("#era",el).addEventListener("input",e=>{year=+e.target.value;$("#yr",el).textContent=year;list()});
+    cv.addEventListener("pointermove",e=>{if(!drag)return;const k=180/cv.clientWidth;l0=drag[2]-(e.clientX-drag[0])*k;p0=Math.max(-80,Math.min(80,drag[3]+(e.clientY-drag[1])*k));if(Math.abs(e.clientX-drag[0])>20)spun=true});
+    const end=()=>{drag=null;chk();setTimeout(()=>{if(!drag)auto=true},2500)};cv.addEventListener("pointerup",end);cv.addEventListener("pointercancel",end);
+    $("#era",el).addEventListener("input",e=>{year=+e.target.value;$("#yr",el).textContent=year;list();chk()});
     list();loop();return()=>cancelAnimationFrame(raf);
   },
   tapin(el){
@@ -392,7 +462,7 @@ const TOYS={
     add(6);
     feed.addEventListener("scroll",()=>{seen=Math.max(seen,Math.floor(feed.scrollTop/120)+1);$("#sc",el).textContent=`${seen} posts seen`;
       if(feed.scrollTop+feed.clientHeight>feed.scrollHeight-150)add(4);
-      if(seen>=LIMIT&&stop.hidden){stop.innerHTML=`<b>Tap in instead.</b><p>That was ${seen} posts.</p><p>${IDEAS[Math.floor(Math.random()*IDEAS.length)]}</p><button id="again">OK, phone down</button>`;stop.hidden=false;
+      if(seen>=LIMIT&&stop.hidden){stop.innerHTML=`<b>Tap in instead.</b><p>That was ${seen} posts.</p><p>${IDEAS[Math.floor(Math.random()*IDEAS.length)]}</p><button id="again">OK, phone down</button>`;stop.hidden=false;done("tapin");
         $("#again",el).onclick=()=>{stop.hidden=true;feed.scrollTop=0;seen=0;$("#sc",el).textContent="0 posts seen"}}});
   },
   ttt(el){
@@ -403,7 +473,7 @@ const TOYS={
       b.forEach((v,i)=>{if(v)return;b[i]=me?"O":"X";const r=mm(b,!me);b[i]=null;if(me?r.s>best.s:r.s<best.s)best={s:r.s,i}});return best};
     const bd=$("#b",el),st=$("#st",el);
     const draw=w=>{bd.innerHTML=B.map((v,i)=>`<button data-c="${i}" class="${v||""} ${w&&w.includes(i)?"win":""}" aria-label="Cell ${i+1}${v?", "+v:""}">${v||""}</button>`).join("")};
-    const end=()=>{const w=win(B);if(w){over=true;draw(w);st.textContent=B[w[0]]==="X"?"You win! Rematch?":"Bot wins this one.";return true}if(B.every(Boolean)){over=true;draw();st.textContent="Draw.";return true}return false};
+    const end=()=>{const w=win(B);if(w){over=true;draw(w);st.textContent=B[w[0]]==="X"?"You win! Rematch?":"Bot wins this one.";if(B[w[0]]==="X")done("ttt");return true}if(B.every(Boolean)){over=true;draw();st.textContent="Draw.";done("ttt");return true}return false};
     const reset=()=>{B=Array(9).fill(null);over=false;draw();st.textContent="Your move."};
     bd.addEventListener("click",e=>{const c=e.target.closest("[data-c]");if(!c||over||B[c.dataset.c])return;B[c.dataset.c]="X";draw();if(end())return;st.textContent="Bot is thinking…";
       setTimeout(()=>{const f=B.map((v,i)=>v?null:i).filter(v=>v!==null);const i=Math.random()<.25?f[Math.floor(Math.random()*f.length)]:mm(B,true).i;B[i]="O";draw();if(!end())st.textContent="Your move."},380)});
@@ -413,9 +483,45 @@ const TOYS={
     const it=[{t:"Add a dark mode",c:"UI",v:31},{t:"Let me edit my comments",c:"Feature",v:18},{t:"Roadmap view on mobile",c:"UX",v:24},{t:"Search across all feedback",c:"Enhancement",v:9}];
     el.innerHTML=`<div class="toy-label"><span>Try it · upvote and watch it re-sort</span><span>Sample feedback</span></div><div class="fb" id="fb"></div>`;
     const box=$("#fb",el);const draw=()=>{it.sort((a,b)=>b.v-a.v);box.innerHTML=it.map(x=>`<div class="fb-item"><button class="vote" data-k="${x.t}" aria-pressed="${!!x.me}" aria-label="Upvote ${x.t}">▲<span>${x.v}</span></button><div><b>${x.t}</b><span class="cat">${x.c}</span></div></div>`).join("")};
-    box.addEventListener("click",e=>{const b=e.target.closest("[data-k]");if(!b)return;const x=it.find(y=>y.t===b.dataset.k);x.me=!x.me;x.v+=x.me?1:-1;draw();const nb=box.querySelector(`[data-k="${CSS.escape(x.t)}"]`);nb&&nb.focus()});draw();
+    box.addEventListener("click",e=>{const b=e.target.closest("[data-k]");if(!b)return;const x=it.find(y=>y.t===b.dataset.k);x.me=!x.me;x.v+=x.me?1:-1;draw();const nb=box.querySelector(`[data-k="${CSS.escape(x.t)}"]`);nb&&nb.focus();if(it.every(y=>y.me))done("feedback")});draw();
   }
 };
+
+/* ---------- quests: each demo has a goal; clearing all six lights the string and drops confetti ---------- */
+const KEY="melat-quests",toasts=$("#toasts");let pending=false;
+const got=new Set((()=>{try{return JSON.parse(localStorage.getItem(KEY))||[]}catch{return[]}})());
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify([...got]))}catch{}};
+const allDone=()=>P.every(p=>got.has(p.id));
+function renderQ(){
+  document.querySelectorAll("[data-q]").forEach(e=>e.classList.toggle("done",got.has(e.dataset.q)));
+  document.querySelectorAll(".tag[data-id]").forEach(t=>t.classList.toggle("cleared",got.has(t.dataset.id)));
+  $("#dots").innerHTML=P.map(p=>`<i class="${got.has(p.id)?"on":""}" style="--c:var(${p.a})"></i>`).join("")+(got.has("bulbs")?`<i class="on star" style="--c:var(--bulb)"></i>`:"");
+  $("#hud-n").textContent=`${P.filter(p=>got.has(p.id)).length}/${P.length} quests`;
+  $("#qlist").innerHTML=P.map(p=>`<li class="${got.has(p.id)?"done":""}" style="--a:var(${p.a})"><i class="chk" aria-hidden="true"></i><button data-open="${p.id}"><b>${p.name}</b><span>${p.quest}</span></button></li>`).join("")
+    +`<li class="${got.has("bulbs")?"done":""}" style="--a:var(--amber)"><i class="chk" aria-hidden="true"></i><span><b>Secret</b><span>${got.has("bulbs")?"Light every bulb on the string ★":"??? Try looking up."}</span></span></li>`;
+  $("#finale").hidden=!allDone();
+}
+function toast(html){const t=document.createElement("div");t.className="toast";t.innerHTML=html;toasts.append(t);setTimeout(()=>t.remove(),3400)}
+function done(id){
+  if(got.has(id))return;const was=allDone();got.add(id);save();renderQ();
+  toast(id==="bulbs"?"<b>★</b> Secret found: every bulb is lit":`<b>★</b> Quest cleared · ${P.find(p=>p.id===id).name}`);
+  if(!was&&allDone()){if(dlg.open){pending=true;setTimeout(()=>toast("That’s all six. Close this for a surprise."),900)}else finale()}
+}
+function finale(){LIGHTS.party();confetti();toast("<b>★</b> All quests cleared. Thanks for playing!")}
+function confetti(){
+  if(reduce)return;const c=document.createElement("canvas"),x=c.getContext("2d"),W=c.width=innerWidth,H=c.height=innerHeight;c.className="confetti";document.body.append(c);
+  const cols=["--blue","--sky","--teal","--indigo","--amber","--coral"].map(css);
+  const ps=Array.from({length:170},()=>({x:Math.random()*W,y:-Math.random()*H*.6,vx:(Math.random()-.5)*3,vy:Math.random()*3+1,r:Math.random()*6.3,vr:(Math.random()-.5)*.3,s:Math.random()*6+6,c:cols[Math.floor(Math.random()*cols.length)]}));
+  let f=0;const tick=()=>{x.clearRect(0,0,W,H);for(const p of ps){p.vy=Math.min(p.vy+.08,7);p.x+=p.vx+Math.sin((f+p.s*9)/14)*.8;p.y+=p.vy;p.r+=p.vr;
+    x.save();x.translate(p.x,p.y);x.rotate(p.r);x.fillStyle=p.c;x.fillRect(-p.s/2,-p.s/4,p.s,p.s/2);x.restore()}
+    if(++f<260)requestAnimationFrame(tick);else c.remove()};tick();
+}
+const panel=open=>{$("#hud-panel").hidden=!open;$("#hud-btn").setAttribute("aria-expanded",open)};
+$("#hud-btn").onclick=()=>panel($("#hud-panel").hidden);
+$("#q-reset").onclick=()=>{got.clear();save();renderQ()};
+document.addEventListener("click",e=>{if(!e.target.closest("#hud")||e.target.closest("[data-open]"))panel(false)});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")panel(false)});
+renderQ();
 })();
 </script>
 </body>

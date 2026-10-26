@@ -1,0 +1,422 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Melat Amde Gebremeskel, software engineer. Projects and playable demos.">
+<title>Melat Gebremeskel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: string lights across the top, a hero with a hanging name sign that flips day/night,
+   then project tags clipped to a second light string. Each tag swings and opens a small playable demo. */
+:root{
+  --bg:#E8F0FB;          /* morning blue */
+  --card:#FFFFFF;
+  --ink:#13213F;         /* navy */
+  --dim:#55627F;
+  --line:rgba(19,33,63,.14);
+  --blue:#2F6FEB;
+  --sky:#5AB0F0;
+  --teal:#1C9C95;
+  --indigo:#5B5BD6;
+  --amber:#E9A21B;
+  --coral:#E3604B;
+  --bulb-off:#C9D5E8;
+  --bulb:#FFC857;
+  --glow:0;
+  --shadow:0 1px 0 rgba(19,33,63,.06),0 14px 28px -16px rgba(19,33,63,.35);
+  --f-display:"Bricolage Grotesque", "Arial Narrow", system-ui, sans-serif;
+  --f-body:"Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){--bg:#0B1528;--card:#14213D;--ink:#EAF0FA;--dim:#9AA9C7;--line:rgba(234,240,250,.13);
+    --blue:#6E9BFF;--sky:#7CC4F7;--teal:#43C2BA;--indigo:#8E8CF2;--amber:#F6BC45;--coral:#F2806D;--bulb-off:#2A3757;--glow:1;
+    --shadow:0 1px 0 rgba(0,0,0,.3),0 16px 30px -16px rgba(0,0,0,.7);color-scheme:dark}
+}
+:root[data-theme="dark"]{--bg:#0B1528;--card:#14213D;--ink:#EAF0FA;--dim:#9AA9C7;--line:rgba(234,240,250,.13);
+  --blue:#6E9BFF;--sky:#7CC4F7;--teal:#43C2BA;--indigo:#8E8CF2;--amber:#F6BC45;--coral:#F2806D;--bulb-off:#2A3757;--glow:1;
+  --shadow:0 1px 0 rgba(0,0,0,.3),0 16px 30px -16px rgba(0,0,0,.7);color-scheme:dark}
+
+*{box-sizing:border-box}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0}
+img{max-width:100%}
+[hidden]{display:none!important}
+html,body{overflow-x:clip}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:1rem;line-height:1.55;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));transition:background-color .5s,color .5s}
+a{color:inherit}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--blue);outline-offset:3px;border-radius:6px}
+.wrap{max-width:1100px;margin:0 auto}
+h1,h2,h3{font-family:var(--f-display);margin:0;line-height:1;text-wrap:balance}
+.eyebrow{font-family:var(--f-mono);font-size:.74rem;letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}
+
+/* ---------- string lights ---------- */
+.lights{position:relative;height:44px;margin:0 -16px}
+.lights svg{display:block;width:100%;height:44px;overflow:visible}
+.wire{fill:none;stroke:var(--ink);stroke-opacity:.35;stroke-width:1.5}
+.bulb{cursor:pointer}
+.bulb .cap{fill:var(--ink);opacity:.55}
+.bulb .glass{fill:var(--bulb-off);transition:fill .25s}
+.bulb.on .glass{fill:var(--c,var(--bulb))}
+.bulb .halo{fill:var(--c,var(--bulb));opacity:0;transition:opacity .25s}
+.bulb.on .halo{opacity:calc(.12 + var(--glow)*.3)}
+.bulb:hover .glass{transform-box:fill-box;transform-origin:50% 0;animation:jiggle .5s}
+@keyframes jiggle{30%{rotate:12deg}70%{rotate:-8deg}}
+.lights-hint{position:absolute;right:16px;top:44px;font-family:var(--f-mono);font-size:.68rem;color:var(--dim)}
+
+/* ---------- hero ---------- */
+.hero{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:40px;align-items:start;padding-block:40px 56px}
+.hero h1{font-size:clamp(3.2rem,9vw,6.4rem);font-weight:800;letter-spacing:-.035em}
+.hero h1 span{color:var(--blue)}
+.hero p{font-size:1.15rem;color:var(--dim);max-width:46ch;margin:18px 0 0}
+.ctas{display:flex;gap:10px;flex-wrap:wrap;margin-top:26px}
+.btn{display:inline-flex;align-items:center;gap:8px;border:2px solid var(--ink);background:var(--ink);color:var(--bg);border-radius:999px;padding:10px 18px;font-weight:700;font-size:.95rem;text-decoration:none;transition:transform .15s}
+.btn:hover{transform:translateY(-2px)}
+.btn.ghost{background:transparent;color:var(--ink)}
+.btn svg{width:17px;height:17px}
+
+.hang{display:flex;flex-direction:column;align-items:center;perspective:700px;padding-top:4px}
+.hang .nail{width:10px;height:10px;border-radius:50%;background:var(--ink)}
+.hang .strings{width:130px;height:44px;display:block}
+.hang .strings path{stroke:var(--ink);fill:none;stroke-width:1.5}
+.sign{width:210px;height:118px;border:none;padding:0;background:transparent;position:relative;transform-style:preserve-3d;transform-origin:50% 0;
+  transition:transform .8s cubic-bezier(.3,1.4,.5,1);margin-top:-2px}
+.sign.flip{transform:rotateY(180deg)}
+.sign:hover{animation:sway 1.8s ease-in-out}
+@keyframes sway{25%{rotate:3deg}75%{rotate:-2deg}}
+.face{position:absolute;inset:0;border-radius:12px;display:grid;place-items:center;text-align:center;backface-visibility:hidden;border:2.5px solid var(--ink);box-shadow:var(--shadow)}
+.face b{display:block;font-family:var(--f-display);font-weight:800;font-size:2rem;letter-spacing:-.01em;line-height:1}
+.face small{display:block;font-family:var(--f-mono);font-size:.68rem;letter-spacing:.08em;margin-top:6px}
+.face.front{background:#2F6FEB;color:#fff}
+.face.back{background:#13213F;color:#FFC857;transform:rotateY(180deg)}
+.sign-hint{font-family:var(--f-mono);font-size:.7rem;color:var(--dim);margin-top:12px;text-align:center}
+@media (max-width:700px){.hero{grid-template-columns:minmax(0,1fr)}.hang{align-items:flex-start}.sign-hint{text-align:left}}
+
+/* ---------- projects on the line ---------- */
+.sec-head{display:flex;justify-content:space-between;align-items:end;gap:16px;flex-wrap:wrap}
+.sec-head h2{font-size:clamp(2.2rem,5vw,3.2rem);font-weight:800;letter-spacing:-.025em}
+.sec-head p{margin:6px 0 0;color:var(--dim)}
+.line{position:relative;margin-top:30px;padding-top:26px}
+.line::before{content:"";position:absolute;left:-16px;right:-16px;top:12px;height:2px;background:var(--line)}
+.tags{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:40px 26px}
+@media (max-width:900px){.tags{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:560px){.tags{grid-template-columns:minmax(0,1fr)}}
+.tag{--a:var(--blue);position:relative;transform-origin:50% -26px;transition:transform .6s cubic-bezier(.3,1.6,.5,1)}
+.tag:nth-child(odd){rotate:-1.2deg}.tag:nth-child(even){rotate:1.4deg}
+.tag:hover{animation:swing 1.4s ease-in-out}
+@keyframes swing{20%{transform:rotate(4deg)}45%{transform:rotate(-3deg)}70%{transform:rotate(1.5deg)}}
+.pin{position:absolute;left:50%;top:-30px;width:14px;height:30px;translate:-50% 0;z-index:2}
+.pin::before{content:"";position:absolute;left:3px;top:0;width:8px;height:22px;border-radius:3px;background:var(--a);box-shadow:inset 0 0 0 1.5px rgba(0,0,0,.2)}
+.pin::after{content:"";position:absolute;left:6px;top:10px;width:2px;height:20px;background:rgba(0,0,0,.25)}
+.tag-card{background:var(--card);border:2px solid var(--ink);border-radius:14px;overflow:hidden;box-shadow:var(--shadow);display:flex;flex-direction:column;height:100%}
+.tag-top{height:12px;background:repeating-linear-gradient(90deg,var(--a) 0 18px,transparent 18px 26px)}
+.tag-body{padding:20px;display:flex;flex-direction:column;gap:10px;flex:1}
+.tag .kind{font-family:var(--f-mono);font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;color:var(--a)}
+.tag h3{font-size:1.8rem;font-weight:800;letter-spacing:-.02em}
+.tag p{margin:0;color:var(--dim);font-size:.95rem}
+.stack{display:flex;flex-wrap:wrap;gap:6px;margin-top:auto;padding-top:4px}
+.stack span{font-family:var(--f-mono);font-size:.7rem;padding:3px 8px;border-radius:6px;background:color-mix(in srgb,var(--a) 13%,transparent)}
+.tag-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.tag-actions .btn{padding:8px 14px;font-size:.88rem}
+.tag-actions .play{background:var(--a);border-color:var(--a);color:#fff}
+
+.also{margin-top:56px}
+.also-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+.also-row a,.also-row span{font-family:var(--f-mono);font-size:.8rem;padding:7px 12px;border:1.5px solid var(--line);border-radius:8px;text-decoration:none;background:var(--card)}
+.also-row a:hover{border-color:var(--blue);color:var(--blue)}
+.also-row span{color:var(--dim)}
+
+footer{margin-top:90px;border-top:2px solid var(--line);padding-block:30px 60px;display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;align-items:end}
+footer h2{font-size:clamp(2rem,5vw,3rem);font-weight:800;letter-spacing:-.02em}
+footer h2 span{color:var(--blue)}
+
+/* ---------- demo dialog ---------- */
+dialog{border:none;padding:0;background:transparent;color:var(--ink);width:100%;max-width:min(640px,calc(100vw - 24px));max-height:calc(100dvh - 24px)}
+dialog::backdrop{background:rgba(11,21,40,.55);backdrop-filter:blur(3px)}
+.room{--a:var(--blue);background:var(--card);border:2.5px solid var(--ink);border-radius:16px;overflow:hidden}
+.room .tag-top{height:14px}
+.room-body{padding:22px;display:grid;gap:16px}
+.room-head{display:flex;justify-content:space-between;align-items:start;gap:12px}
+.room h3{font-size:2.2rem;font-weight:800;letter-spacing:-.02em}
+.room .desc{margin:0;color:var(--dim)}
+.x{border:2px solid var(--ink);background:var(--card);border-radius:50%;width:38px;height:38px;flex:none}
+.toy{border:1.5px solid var(--line);border-radius:12px;padding:16px;background:color-mix(in srgb,var(--a) 6%,var(--card))}
+.toy-label{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-family:var(--f-mono);font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;color:var(--a);margin-bottom:12px}
+.toy-label span:last-child{color:var(--dim);text-transform:none;letter-spacing:0}
+
+/* farm */
+.sliders{display:grid;gap:10px}
+.sl{display:grid;grid-template-columns:96px minmax(0,1fr) 62px;gap:10px;align-items:center;font-size:.88rem}
+.sl output{font-family:var(--f-mono);text-align:right;font-variant-numeric:tabular-nums}
+.sl input{width:100%;accent-color:var(--teal)}
+.meter{display:flex;align-items:center;gap:14px;margin-top:14px}
+.meter svg{width:84px;height:84px;flex:none}
+.verdict b{font-family:var(--f-display);font-size:1.2rem;display:block}
+/* orders */
+.orders{display:grid;gap:8px}
+.order{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:10px;align-items:center;padding:10px 12px;border:1.5px solid var(--line);border-radius:10px;background:var(--card)}
+.order .what{font-size:.88rem;min-width:0}
+.order .what b{font-family:var(--f-mono);font-size:.76rem;display:block}
+.pill{font-family:var(--f-mono);font-size:.7rem;padding:3px 9px;border-radius:999px;border:1.5px solid currentColor;white-space:nowrap}
+.s0{color:var(--coral)}.s1{color:var(--amber)}.s2{color:var(--teal)}.s3{color:var(--dim)}
+.order button{border:1.5px solid var(--ink);background:transparent;border-radius:8px;padding:5px 10px;font-size:.8rem;font-weight:700}
+.order button:disabled{opacity:.35;cursor:default}
+@media (max-width:460px){.order{grid-template-columns:minmax(0,1fr) auto}}
+/* globe */
+.globe-wrap{display:grid;grid-template-columns:minmax(0,1fr) 180px;gap:16px;align-items:center}
+@media (max-width:560px){.globe-wrap{grid-template-columns:minmax(0,1fr)}}
+#globe{width:100%;max-width:300px;aspect-ratio:1;justify-self:center;cursor:grab;touch-action:none}
+.era{display:grid;gap:6px;font-size:.88rem}
+.era input{width:100%;accent-color:var(--blue)}
+.era output{font-family:var(--f-display);font-weight:800;font-size:2rem}
+.pinlist{font-family:var(--f-mono);font-size:.72rem;color:var(--dim);margin:0;padding:0;list-style:none;display:grid;gap:2px}
+.pinlist li.on{color:var(--ink)}
+/* feed */
+.phone{width:220px;max-width:100%;height:300px;margin:0 auto;border:3px solid var(--ink);border-radius:26px;overflow:hidden;position:relative;background:var(--bg)}
+.feed{height:100%;overflow-y:auto;padding:12px;display:grid;gap:10px;align-content:start;scrollbar-width:none}
+.feed::-webkit-scrollbar{display:none}
+.post{border-radius:10px;background:var(--card);border:1px solid var(--line);padding:10px;display:grid;gap:6px}
+.post .bar{height:8px;border-radius:4px;background:var(--line)}
+.post .img{height:70px;border-radius:6px}
+.stop{position:absolute;inset:0;background:#5B5BD6;color:#fff;display:grid;place-content:center;text-align:center;padding:18px;gap:10px}
+.stop b{font-family:var(--f-display);font-size:1.4rem;line-height:1.05}
+.stop p{margin:0;font-size:.85rem}
+.stop button{background:#fff;color:#13213F;border:none;border-radius:999px;padding:7px 12px;font-weight:700;font-size:.8rem;justify-self:center}
+.scrolls{text-align:center;font-family:var(--f-mono);font-size:.75rem;color:var(--dim);margin-top:8px}
+/* ttt */
+.ttt{display:grid;grid-template-columns:repeat(3,64px);gap:6px;justify-content:center}
+.ttt button{width:64px;height:64px;border:2px solid var(--ink);border-radius:10px;background:var(--card);font-family:var(--f-display);font-weight:800;font-size:2rem;line-height:1}
+.ttt button.X{color:var(--coral)}.ttt button.O{color:var(--blue)}
+.ttt button.win{background:var(--amber);color:#13213F}
+.ttt-status{text-align:center;font-family:var(--f-mono);font-size:.82rem;margin-top:10px;min-height:1.3em}
+.ttt-row{display:flex;justify-content:center;margin-top:8px}
+/* feedback */
+.fb{display:grid;gap:8px}
+.fb-item{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px;align-items:center;padding:10px 12px;border:1.5px solid var(--line);border-radius:10px;background:var(--card)}
+.vote{display:grid;justify-items:center;border:1.5px solid var(--ink);border-radius:8px;padding:4px 8px;background:transparent;min-width:46px;font-family:var(--f-mono);font-size:.8rem;font-weight:600}
+.vote[aria-pressed="true"]{background:var(--a);border-color:var(--a);color:#fff}
+.fb-item b{font-size:.92rem}
+.fb-item .cat{font-family:var(--f-mono);font-size:.68rem;color:var(--a);margin-left:6px}
+
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="lights" aria-label="String lights: click a bulb to switch it"><svg id="lights" viewBox="0 0 1000 44" preserveAspectRatio="none"></svg><span class="lights-hint">click the bulbs</span></div>
+
+<main class="wrap">
+  <header class="hero">
+    <div>
+      <div class="eyebrow">github.com/Mela234</div>
+      <h1 style="margin-top:12px">Hi, I’m <span>Melat</span>.</h1>
+      <p>Software engineer at Microsoft. After hours I build Android apps, web platforms and small experiments. Each project below has a demo you can play with.</p>
+      <div class="ctas">
+        <a class="btn" href="#projects">See projects</a>
+        <a class="btn ghost" href="https://github.com/Mela234" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.33-1.28-1.69-1.28-1.69-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.8 1.19 1.83 1.19 3.09 0 4.42-2.7 5.39-5.26 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z"/></svg>GitHub</a>
+      </div>
+    </div>
+    <div class="hang">
+      <span class="nail" aria-hidden="true"></span>
+      <svg class="strings" viewBox="0 0 130 44" aria-hidden="true"><path d="M65 0 L18 44 M65 0 L112 44"/></svg>
+      <button class="sign" id="sign" aria-label="Switch between day and night">
+        <span class="face front"><span><b>9 → 5</b><small>SOFTWARE ENGINEER · MSFT</small></span></span>
+        <span class="face back"><span><b>5 → late</b><small>SIDE PROJECTS</small></span></span>
+      </button>
+      <span class="sign-hint">flip me</span>
+    </div>
+  </header>
+
+  <section id="projects" aria-labelledby="proj-h">
+    <div class="sec-head">
+      <div><div class="eyebrow">On the line</div><h2 id="proj-h">Projects</h2></div>
+      <p>Hit “Play” for a quick demo. The code lives on GitHub.</p>
+    </div>
+    <div class="line"><div class="tags" id="tags"></div></div>
+
+    <div class="also">
+      <div class="eyebrow">Also built</div>
+      <div class="also-row" id="also"></div>
+    </div>
+  </section>
+
+  <footer>
+    <h2>Let’s build <span>something</span>.</h2>
+    <a class="btn" href="https://github.com/Mela234" target="_blank" rel="noopener">github.com/Mela234 ↗</a>
+  </footer>
+</main>
+
+<dialog id="dlg" aria-labelledby="room-title"><div id="room"></div></dialog>
+
+<script>
+(() => {
+const GH="https://github.com/Mela234/";
+const P=[
+  {id:"farm",a:"--teal",kind:"Android · on-device AI",name:"Farm Assistant",line:"Offline crop diagnosis for farmers, running Gemma 4 right on the phone.",stack:["Kotlin","Compose","LiteRT-LM","BLE"],repo:"Assist-Me-Farm",toy:"farm",
+   desc:"Snap a crop, read soil data from a Bluetooth sensor, and get a diagnosis with no internet. Built for the Kaggle Gemma 4 Good hackathon."},
+  {id:"bazaar",a:"--coral",kind:"Mobile + web platform",name:"Bazaar",line:"Pickup marketplace for specialty grocers: shopper app plus merchant dashboard.",stack:["React Native","Expo","React","Tailwind"],repo:"bazaar-app",toy:"bazaar",
+   desc:"A React Native shopper app and a React merchant portal with orders, inventory and revenue."},
+  {id:"voices",a:"--blue",kind:"3D visualisation",name:"VOICES",line:"Protest movements from 1848 to today on an interactive 3D globe.",stack:["Three.js","WebGL","GeoJSON"],repo:"Protest-Globe",toy:"globe",
+   desc:"Spin the globe, scrub through eras and open a city to see its protest posters."},
+  {id:"ttt",a:"--amber",kind:"Real-time multiplayer",name:"Tic-Tac-Toe Online",line:"Multiplayer tic-tac-toe with game rooms and live chat.",stack:["Python","Flask","Socket.IO"],repo:"tictactoe-game",toy:"ttt",
+   desc:"A Flask-SocketIO server keeps the game state and relays moves and chat between players in real time."},
+  {id:"feedback",a:"--indigo",kind:"Full stack",name:"Product Feedback",line:"Feedback board with upvotes, threaded comments and a roadmap.",stack:["React","Express","Node"],repo:"Product_feedback_App",toy:"feedback",
+   desc:"Post ideas, upvote, sort and reply. React front end, Express API."},
+  {id:"tapin",a:"--sky",kind:"Web · wellbeing",name:"Tap-In",line:"A site that interrupts doomscrolling so parents can tap in with their kids.",stack:["Web"],repo:"TapInFinal",toy:"tapin",
+   desc:"Endless feeds never give you a stopping point. Tap-In adds one."}
+];
+const ALSO=[["Bazaar Merchant Portal","bazaar-merchant-portal"],["Bazaar for Business","Bazzar"],["Dera Market","Ethnic-market-"],["Portfolio 2023","Portfolio"],["Sholla Market · private",null],["SwapTop · private",null]];
+const $=(s,r=document)=>r.querySelector(s);
+const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* ---------- lights ---------- */
+(()=>{
+  const svg=$("#lights"),cols=["--bulb","--sky","--bulb","--coral","--bulb","--teal"];const off=new Set();
+  const build=()=>{const W=Math.max(320,svg.clientWidth||svg.parentNode.clientWidth),n=Math.max(6,Math.round(W/62)),w=W/n;
+    svg.setAttribute("viewBox",`0 0 ${W} 44`);let d="M0 6 ",b="";
+    for(let i=0;i<n;i++){d+=`Q${i*w+w/2} 30 ${(i+1)*w} 6 `;const x=i*w+w/2,y=18,on=!off.has(i)&&i%4!==3;
+      b+=`<g class="bulb${on?" on":""}" data-i="${i}" style="--c:var(${cols[i%cols.length]})" tabindex="0" role="switch" aria-checked="${on}" aria-label="Bulb ${i+1}">
+        <ellipse class="halo" cx="${x}" cy="${y+12}" rx="16" ry="16"/><rect class="cap" x="${x-3}" y="${y}" width="6" height="5" rx="1"/>
+        <path class="glass" d="M${x-5} ${y+5} Q${x-7} ${y+16} ${x} ${y+21} Q${x+7} ${y+16} ${x+5} ${y+5} Z"/></g>`}
+    svg.innerHTML=`<path class="wire" d="${d}"/>`+b};
+  svg.removeAttribute("preserveAspectRatio");build();new ResizeObserver(build).observe(svg.parentNode);
+  const flip=g=>{g.classList.toggle("on");const on=g.classList.contains("on");g.setAttribute("aria-checked",on);const i=+g.dataset.i;on?off.delete(i):off.add(i)};
+  svg.addEventListener("click",e=>{const g=e.target.closest(".bulb");if(g)flip(g)});
+  svg.addEventListener("keydown",e=>{const g=e.target.closest(".bulb");if(g&&(e.key==="Enter"||e.key===" ")){e.preventDefault();flip(g)}});
+  if(!reduce)setInterval(()=>{[...svg.querySelectorAll(".bulb")].forEach((g,i)=>setTimeout(()=>{g.style.opacity=".5";setTimeout(()=>g.style.opacity="",160)},i*60))},7000);
+})();
+
+/* ---------- day / night sign ---------- */
+const sign=$("#sign");
+const isDark=()=>{const t=document.documentElement.dataset.theme;return t?t==="dark":matchMedia("(prefers-color-scheme: dark)").matches};
+const sync=()=>sign.classList.toggle("flip",isDark());
+sync();
+sign.onclick=()=>{document.documentElement.dataset.theme=isDark()?"light":"dark";sync()};
+new MutationObserver(sync).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]});
+matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change",sync);
+
+/* ---------- tags ---------- */
+$("#tags").innerHTML=P.map(p=>`
+  <article class="tag" style="--a:var(${p.a})">
+    <span class="pin" aria-hidden="true"></span>
+    <div class="tag-card"><div class="tag-top" aria-hidden="true"></div>
+      <div class="tag-body">
+        <div class="kind">${p.kind}</div><h3>${p.name}</h3><p>${p.line}</p>
+        <div class="stack">${p.stack.map(s=>`<span>${s}</span>`).join("")}</div>
+        <div class="tag-actions">
+          <button class="btn play" data-open="${p.id}">▶ Play</button>
+          <a class="btn ghost" href="${GH+p.repo}" target="_blank" rel="noopener">Code ↗</a>
+        </div>
+      </div></div>
+  </article>`).join("");
+$("#also").innerHTML=ALSO.map(([n,r])=>r?`<a href="${GH+r}" target="_blank" rel="noopener">${n} ↗</a>`:`<span>${n}</span>`).join("");
+
+/* ---------- demo dialog ---------- */
+const dlg=$("#dlg");let cleanup=null;
+document.addEventListener("click",e=>{const o=e.target.closest("[data-open]");if(o)open(o.dataset.open)});
+function open(id){
+  const p=P.find(x=>x.id===id); if(cleanup){cleanup();cleanup=null}
+  $("#room").innerHTML=`<div class="room" style="--a:var(${p.a})"><div class="tag-top" aria-hidden="true"></div><div class="room-body">
+    <div class="room-head"><div><div class="eyebrow">${p.kind}</div><h3 id="room-title">${p.name}</h3></div><button class="x" id="x" aria-label="Close">✕</button></div>
+    <p class="desc">${p.desc}</p><div class="toy" id="toy"></div>
+    <div><a class="btn" href="${GH+p.repo}" target="_blank" rel="noopener">View the code on GitHub ↗</a></div></div></div>`;
+  $("#x").onclick=()=>dlg.close();
+  cleanup=TOYS[p.toy]($("#toy"))||null; dlg.showModal();
+}
+dlg.addEventListener("close",()=>{if(cleanup){cleanup();cleanup=null}});
+dlg.addEventListener("click",e=>{if(e.target===dlg)dlg.close()});
+
+const TOYS={
+  farm(el){
+    el.innerHTML=`<div class="toy-label"><span>Try it · soil check</span><span>Toy formula; the app asks Gemma 4</span></div>
+      <div class="sliders">
+        <label class="sl"><span>Soil pH</span><input id="ph" type="range" min="4" max="9" step="0.1" value="5.2"><output id="ph-o"></output></label>
+        <label class="sl"><span>Moisture</span><input id="mo" type="range" min="0" max="100" value="28"><output id="mo-o"></output></label>
+        <label class="sl"><span>Nitrogen</span><input id="ni" type="range" min="0" max="100" value="35"><output id="ni-o"></output></label>
+      </div>
+      <div class="meter"><svg viewBox="0 0 84 84"><circle cx="42" cy="42" r="34" fill="none" stroke="var(--line)" stroke-width="9"/>
+        <circle id="arc" cx="42" cy="42" r="34" fill="none" stroke-width="9" stroke-linecap="round" transform="rotate(-90 42 42)" stroke-dasharray="213.6" stroke-dashoffset="213.6" style="transition:stroke-dashoffset .4s,stroke .4s"/>
+        <text id="sc" x="42" y="49" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="22" fill="var(--ink)"></text></svg>
+        <div class="verdict" id="verdict"></div></div>`;
+    const ph=$("#ph",el),mo=$("#mo",el),ni=$("#ni",el);
+    const upd=()=>{const p=+ph.value,m=+mo.value,n=+ni.value;
+      $("#ph-o",el).textContent=p.toFixed(1);$("#mo-o",el).textContent=m+"%";$("#ni-o",el).textContent=n+" ppm";
+      let s=100-Math.max(0,Math.abs(p-6.5)-.5)*22-(m<40?(40-m)*1.1:m>70?(m-70)*1.3:0)-(n<50?(50-n)*.7:0);s=Math.round(Math.max(0,Math.min(100,s)));
+      const col=s>=75?"--teal":s>=45?"--amber":"--coral";const arc=$("#arc",el);arc.style.stroke=`var(${col})`;arc.setAttribute("stroke-dashoffset",213.6*(1-s/100));$("#sc",el).textContent=s;
+      const t=[];if(p<6)t.push("add lime to raise pH");if(p>7)t.push("add organic matter to lower pH");if(m<40)t.push("irrigate soon");if(m>70)t.push("check drainage");if(n<50)t.push("add nitrogen");
+      $("#verdict",el).innerHTML=`<b>${s>=75?"Healthy":s>=45?"Needs attention":"At risk"}</b>${t.length?"Suggested: "+t.join(", ")+".":"Conditions look good."}`};
+    [ph,mo,ni].forEach(i=>i.addEventListener("input",upd));upd();
+  },
+  bazaar(el){
+    const ST=["New","Preparing","Ready","Picked up"];
+    const o=[{n:"#1042",w:"Teff injera ×4 · shiro 500g",s:0},{n:"#1043",w:"Basmati 5kg · ghee · cardamom",s:1},{n:"#1044",w:"Berbere 250g · lentils 2kg",s:0}];
+    el.innerHTML=`<div class="toy-label"><span>Try it · merchant order queue</span><span>Like the merchant portal</span></div><div class="orders" id="ol"></div>`;
+    const draw=()=>{$("#ol",el).innerHTML=o.map((x,i)=>`<div class="order"><div class="what"><b>${x.n}</b>${x.w}</div><span class="pill s${x.s}">${ST[x.s]}</span><button data-i="${i}" ${x.s===3?"disabled":""}>${x.s===3?"Done":"Advance →"}</button></div>`).join("")};
+    el.addEventListener("click",e=>{const b=e.target.closest("[data-i]");if(!b)return;o[b.dataset.i].s=Math.min(3,o[b.dataset.i].s+1);draw()});draw();
+  },
+  globe(el){
+    const PINS=[["Paris",48.86,2.35,1848],["Selma",32.41,-87.02,1965],["Soweto",-26.27,27.86,1976],["Berlin",52.52,13.4,1989],["Cairo",30.04,31.24,2011],["Minneapolis",44.98,-93.27,2020]];
+    el.innerHTML=`<div class="toy-label"><span>Try it · drag the globe, scrub the years</span><span>Sample pins</span></div>
+      <div class="globe-wrap"><canvas id="globe" width="600" height="600" aria-label="Globe with protest pins"></canvas>
+      <div class="era"><span>Show up to</span><output id="yr">2020</output><input id="era" type="range" min="1848" max="2020" value="2020" aria-label="Year"><ul class="pinlist" id="pl"></ul></div></div>`;
+    const cv=$("#globe",el),ctx=cv.getContext("2d"),R=270,C=300,rad=Math.PI/180;let l0=-20,p0=22,drag=null,auto=true,raf,year=2020;
+    const proj=(la,lo)=>{const p=la*rad,l=(lo-l0)*rad,q=p0*rad;return[C+R*Math.cos(p)*Math.sin(l),C-R*(Math.cos(q)*Math.sin(p)-Math.sin(q)*Math.cos(p)*Math.cos(l)),Math.sin(q)*Math.sin(p)+Math.cos(q)*Math.cos(p)*Math.cos(l)]};
+    const pl=$("#pl",el);const list=()=>{pl.innerHTML=PINS.map(p=>`<li class="${p[3]<=year?"on":""}">${p[3]} · ${p[0]}</li>`).join("")};
+    const draw=()=>{const ink=css("--ink"),line=css("--line"),blue=css("--blue"),coral=css("--coral"),card=css("--card");
+      ctx.clearRect(0,0,600,600);ctx.beginPath();ctx.arc(C,C,R,0,6.28);ctx.fillStyle=card;ctx.fill();ctx.lineWidth=4;ctx.strokeStyle=ink;ctx.stroke();
+      ctx.strokeStyle=line;ctx.lineWidth=2;const seg=pts=>{let on=false;ctx.beginPath();for(const[a,b]of pts){const[x,y,c]=proj(a,b);if(c>0){on?ctx.lineTo(x,y):ctx.moveTo(x,y);on=true}else on=false}ctx.stroke()};
+      for(let lo=-180;lo<180;lo+=30){const p=[];for(let la=-90;la<=90;la+=4)p.push([la,lo]);seg(p)}
+      for(let la=-60;la<=60;la+=30){const p=[];for(let lo=-180;lo<=180;lo+=4)p.push([la,lo]);seg(p)}
+      for(const p of PINS){if(p[3]>year)continue;const[x,y,c]=proj(p[1],p[2]);if(c<=0)continue;
+        ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x,y-32);ctx.strokeStyle=ink;ctx.lineWidth=3;ctx.stroke();
+        ctx.beginPath();ctx.arc(x,y-36,9,0,6.28);ctx.fillStyle=p[3]>=2000?coral:blue;ctx.fill();
+        ctx.font="600 20px JetBrains Mono, monospace";ctx.fillStyle=ink;ctx.fillText(`${p[0]} ${p[3]}`,x+14,y-30)}};
+    const loop=()=>{if(auto&&!reduce)l0-=.25;draw();raf=requestAnimationFrame(loop)};
+    cv.addEventListener("pointerdown",e=>{drag=[e.clientX,e.clientY,l0,p0];auto=false;cv.setPointerCapture(e.pointerId)});
+    cv.addEventListener("pointermove",e=>{if(!drag)return;const k=180/cv.clientWidth;l0=drag[2]-(e.clientX-drag[0])*k;p0=Math.max(-80,Math.min(80,drag[3]+(e.clientY-drag[1])*k))});
+    const end=()=>{drag=null;setTimeout(()=>{if(!drag)auto=true},2500)};cv.addEventListener("pointerup",end);cv.addEventListener("pointercancel",end);
+    $("#era",el).addEventListener("input",e=>{year=+e.target.value;$("#yr",el).textContent=year;list()});
+    list();loop();return()=>cancelAnimationFrame(raf);
+  },
+  tapin(el){
+    const LIMIT=9,h=["--blue","--sky","--teal","--indigo","--amber"],IDEAS=["Build a blanket fort together.","Ask about the best part of their day.","Go outside and find five different leaves.","Draw each other in 60 seconds.","Let them teach you a game they love."];
+    el.innerHTML=`<div class="toy-label"><span>Try it · scroll the feed</span><span>Keep going…</span></div>
+      <div class="phone"><div class="feed" id="feed" tabindex="0" aria-label="Endless feed"></div><div class="stop" id="stop" hidden></div></div><div class="scrolls" id="sc">0 posts seen</div>`;
+    const feed=$("#feed",el),stop=$("#stop",el);let seen=0;
+    const add=k=>{for(let i=0;i<k;i++){const c=h[feed.children.length%h.length];feed.insertAdjacentHTML("beforeend",`<div class="post"><div class="bar" style="width:45%"></div><div class="img" style="background:color-mix(in srgb,var(${c}) 50%,var(--card))"></div><div class="bar"></div><div class="bar" style="width:70%"></div></div>`)}};
+    add(6);
+    feed.addEventListener("scroll",()=>{seen=Math.max(seen,Math.floor(feed.scrollTop/120)+1);$("#sc",el).textContent=`${seen} posts seen`;
+      if(feed.scrollTop+feed.clientHeight>feed.scrollHeight-150)add(4);
+      if(seen>=LIMIT&&stop.hidden){stop.innerHTML=`<b>Tap in instead.</b><p>That was ${seen} posts.</p><p>${IDEAS[Math.floor(Math.random()*IDEAS.length)]}</p><button id="again">OK, phone down</button>`;stop.hidden=false;
+        $("#again",el).onclick=()=>{stop.hidden=true;feed.scrollTop=0;seen=0;$("#sc",el).textContent="0 posts seen"}}});
+  },
+  ttt(el){
+    el.innerHTML=`<div class="toy-label"><span>Try it · you are X</span><span>A bot plays the other side</span></div><div class="ttt" id="b"></div><div class="ttt-status" id="st" aria-live="polite">Your move.</div><div class="ttt-row"><button class="btn ghost" id="rs">New game</button></div>`;
+    const L=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];let B,over;
+    const win=b=>{for(const l of L){const[a,c,d]=l;if(b[a]&&b[a]===b[c]&&b[a]===b[d])return l}return null};
+    const mm=(b,me)=>{const w=win(b);if(w)return{s:b[w[0]]==="O"?1:-1};if(b.every(Boolean))return{s:0};let best={s:me?-2:2,i:-1};
+      b.forEach((v,i)=>{if(v)return;b[i]=me?"O":"X";const r=mm(b,!me);b[i]=null;if(me?r.s>best.s:r.s<best.s)best={s:r.s,i}});return best};
+    const bd=$("#b",el),st=$("#st",el);
+    const draw=w=>{bd.innerHTML=B.map((v,i)=>`<button data-c="${i}" class="${v||""} ${w&&w.includes(i)?"win":""}" aria-label="Cell ${i+1}${v?", "+v:""}">${v||""}</button>`).join("")};
+    const end=()=>{const w=win(B);if(w){over=true;draw(w);st.textContent=B[w[0]]==="X"?"You win! Rematch?":"Bot wins this one.";return true}if(B.every(Boolean)){over=true;draw();st.textContent="Draw.";return true}return false};
+    const reset=()=>{B=Array(9).fill(null);over=false;draw();st.textContent="Your move."};
+    bd.addEventListener("click",e=>{const c=e.target.closest("[data-c]");if(!c||over||B[c.dataset.c])return;B[c.dataset.c]="X";draw();if(end())return;st.textContent="Bot is thinking…";
+      setTimeout(()=>{const f=B.map((v,i)=>v?null:i).filter(v=>v!==null);const i=Math.random()<.25?f[Math.floor(Math.random()*f.length)]:mm(B,true).i;B[i]="O";draw();if(!end())st.textContent="Your move."},380)});
+    $("#rs",el).onclick=reset;reset();
+  },
+  feedback(el){
+    const it=[{t:"Add a dark mode",c:"UI",v:31},{t:"Let me edit my comments",c:"Feature",v:18},{t:"Roadmap view on mobile",c:"UX",v:24},{t:"Search across all feedback",c:"Enhancement",v:9}];
+    el.innerHTML=`<div class="toy-label"><span>Try it · upvote and watch it re-sort</span><span>Sample feedback</span></div><div class="fb" id="fb"></div>`;
+    const box=$("#fb",el);const draw=()=>{it.sort((a,b)=>b.v-a.v);box.innerHTML=it.map(x=>`<div class="fb-item"><button class="vote" data-k="${x.t}" aria-pressed="${!!x.me}" aria-label="Upvote ${x.t}">▲<span>${x.v}</span></button><div><b>${x.t}</b><span class="cat">${x.c}</span></div></div>`).join("")};
+    box.addEventListener("click",e=>{const b=e.target.closest("[data-k]");if(!b)return;const x=it.find(y=>y.t===b.dataset.k);x.me=!x.me;x.v+=x.me?1:-1;draw();const nb=box.querySelector(`[data-k="${CSS.escape(x.t)}"]`);nb&&nb.focus()});draw();
+  }
+};
+})();
+</script>
+</body>
+</html>
